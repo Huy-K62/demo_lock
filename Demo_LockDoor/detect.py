@@ -72,7 +72,7 @@ while True:
                 customer_image = face_recognition.load_image_file(name_customer)
                 customer_face_encoding = face_recognition.face_encodings(customer_image)[0]
                 known_face_encodings.append(customer_face_encoding)
-                
+
             button1 = GPIO.input(7)
             button2 = GPIO.input(9)
             # Grab a single frame of video
@@ -125,10 +125,12 @@ while True:
                             flag_detect = 1
                         start_time = time.time()
                         GPIO.output(10, 1)
+                        GPIO.output(8, 1)
                         print("thuc hien trong 3s")
                         
                     else:
                         flag_detect = 0
+                        GPIO.output(8, 0)
                         GPIO.output(10, 0)
                         print("dong cua")
                     face_names.append(name)
@@ -137,6 +139,9 @@ while True:
             if (end_time-start_time > 3):
                 GPIO.output(10, 0)
                 print("het time")
+            if (end_time-start_time > 0.5):
+                GPIO.output(8, 0)
+                
             process_this_frame = not process_this_frame
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 # Scale back up face locations since the frame we detected in was scaled to 1/4 size
