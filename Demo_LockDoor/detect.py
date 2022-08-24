@@ -1,4 +1,3 @@
-
 import face_recognition
 import cv2
 import numpy as np
@@ -34,7 +33,8 @@ flag_b1 = 0
 flag_b2 = 0
 # flag_wait = 0
 count = 1
-
+start_time = 0
+end_time = 0
 # def face():
 while True:
     motion_detect = GPIO.input(11)
@@ -85,7 +85,6 @@ while True:
                             flag_b2 = 0
                             flag_b1 = 0
                         else:
-                            GPIO.output(8, 1)
                             print("bao coi")
             # Only process every other frame of video to save time
             if process_this_frame:
@@ -110,27 +109,22 @@ while True:
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         name = known_face_names[best_match_index]
-                        # flag_wait = 1
                         if(name == "Manager"):
                             flag_detect = 1
                         start_time = time.time()
-                        while True:
-                            GPIO.output(10, 1)
-                            print("thuc hien trong 3s")
-                            end_time = time.time()
-                            if (end_time-start_time > 3 or flag_b1 == 1):
-                            # if(end_time-start_time > 3):
-                                GPIO.output(10, 0)
-                                # print("het time")
-                                break
+                        GPIO.output(10, 1)
+                        print("thuc hien trong 3s")
                         
                     else:
-                        # flag_wait = 0
                         flag_detect = 0
                         GPIO.output(10, 0)
                         print("dong cua")
                     face_names.append(name)
 
+            end_time = time.time()
+            if (end_time-start_time > 3):
+                GPIO.output(10, 0)
+                print("het time")
             process_this_frame = not process_this_frame
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 # Scale back up face locations since the frame we detected in was scaled to 1/4 size
