@@ -1,16 +1,17 @@
+
 import face_recognition
 import cv2
 import numpy as np
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 from threading import Thread
 import threading
 import time
-GPIO.setmode(GPIO.BOARD)       #I use Board pin numbering instead of Broadcom(BCM)
-GPIO.setup(11, GPIO.IN)
-GPIO.setup(7, GPIO.IN) 
-GPIO.setup(9, GPIO.IN) 
-GPIO.setup(8, GPIO.OUT)
-GPIO.setup(10, GPIO.OUT) 
+# GPIO.setmode(GPIO.BOARD)       #I use Board pin numbering instead of Broadcom(BCM)
+# GPIO.setup(11, GPIO.IN)
+# GPIO.setup(7, GPIO.IN) 
+# GPIO.setup(9, GPIO.IN) 
+# GPIO.setup(8, GPIO.OUT)
+# GPIO.setup(10, GPIO.OUT) 
 #import RPi.GPIO as GPIO
 #GPIO.setmode(GPIO.BCM)
 
@@ -37,10 +38,10 @@ start_time = 0
 end_time = 0
 # def face():
 while True:
-    motion_detect = GPIO.input(11)
+    # motion_detect = GPIO.input(11)
     # global process_this_frame
     # global flag_wait
-    # motion_detect = 1
+    motion_detect = 1
     if(motion_detect == 1):
         known_face_names.clear()
         known_face_encodings.clear()
@@ -58,37 +59,50 @@ while True:
             customer_image = face_recognition.load_image_file(name_customer)
             customer_face_encoding = face_recognition.face_encodings(customer_image)[0]
             known_face_encodings.append(customer_face_encoding)
-        #    
-            #known_face_encodings = set(known_face_encodings)
+            # known_face_encodings = set(known_face_encodings)
+            
 
         while True:
-            button1 = GPIO.input(7)
-            button2 = GPIO.input(9)
-            GPIO.output(8, 0)
-            # Grab a single frame of video
+            # with open('name.txt') as rf:
+            #     lines = rf.readlines()
+            #     for idx, line in enumerate(lines):
+            #         known_face_names.append(line)
+            #         known_face_names[idx] = known_face_names[idx].strip()
+            #     #known_face_names = set(known_face_names)
+            # for i in range(count):
+            #     name_customer = "customer"+str(count)+".jpg"
+            #     customer_image = face_recognition.load_image_file(name_customer)
+            #     customer_face_encoding = face_recognition.face_encodings(customer_image)[0]
+            #     known_face_encodings.append(customer_face_encoding)
+            #known_face_encodings = set(known_face_encodings)
+            # button1 = GPIO.input(7)
+            # button2 = GPIO.input(19)
+            # # Grab a single frame of video
             ret, frame = video_capture.read()
-            if(button1 == 1):
-                flag_b1 = 1
-            if(button2 == 1):
-                flag_b2 = 1
-                time.sleep(1)
-            if(flag_b1 == 1):
-                print("Chon che do")
-                if(flag_detect == 1):
-                    if(flag_b2 == 1):
-                        if(top>100 and right>390 and bottom>290 and left>195):
-                            print("chup anh")
-                            count=int(count) + 1
-                            cv2.imwrite("/home/pi/Demo_LockDoor/MFRC522-python/"+"customer"+str(count)+".jpg", frame)
-                            #file_name.write("customer" + str(count))
-                            with open('name.txt', 'a') as wf:
-                                wf.write('Customer' + str(count) + "\n")
-                            # print("sau: ", count)
-                            flag_b2 = 0
-                            flag_b1 = 0
-                            flag_wait = 1
-                        else:
-                            print("bao coi")
+            # if(button1 == 1):
+            #     flag_b1 = 1
+            # if(button2 == 1):
+            #     flag_b2 = 1
+            #     time.sleep(1)
+            # if(flag_b1 == 1):
+            #     print("Chon che do")
+            #     if(flag_detect == 1):
+            #         if(flag_b2 == 1):
+            #             if(top>100 and right>390 and bottom>290 and left>195):
+            #                 print("chup anh")
+            #                 count=int(count) + 1
+            #                 cv2.imwrite("/home/pi/Demo_LockDoor/MFRC522-python/"+"customer"+str(count)+".jpg", frame)
+            #                 #file_name.write("customer" + str(count))
+            #                 with open('name.txt', 'a') as wf:
+            #                     wf.write('Customer' + str(count) + "\n")
+            #                 # print("sau: ", count)
+            #                 flag_b2 = 0
+            #                 flag_b1 = 0
+            #             else:
+            #                 GPIO.output(8, 1)
+            #                 print("bao coi")
+
+
             # Only process every other frame of video to save time
             if process_this_frame:
                 # Resize frame of video to 1/4 size for faster face recognition processing
@@ -112,25 +126,26 @@ while True:
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         name = known_face_names[best_match_index]
+                        start_time = time.time()
+                        print("thuc hien trong 3s")
                         if(name == "Manager"):
                             flag_detect = 1
-                        start_time = time.time()
-                        GPIO.output(10, 1)
-                        GPIO.output(8, 1)
-                        print("thuc hien trong 3s")
-                        
                     else:
                         flag_detect = 0
-                        GPIO.output(8, 0)
-                        GPIO.output(10, 0)
+                        # GPIO.output(10, 0)
                         print("dong cua")
                     face_names.append(name)
-
+            
+            # if(flag_wait == 1):
+            #     start_time = time.time()
+            #     print("thuc hien trong 3s")
+                # GPIO.output(10, 1)
+                # if (end_time-start_time > 3 or flag_b1 == 1):
             end_time = time.time()
             if (end_time-start_time > 3):
-                GPIO.output(10, 0)
+                # GPIO.output(10, 0)
                 print("het time")
-                
+
             process_this_frame = not process_this_frame
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 # Scale back up face locations since the frame we detected in was scaled to 1/4 size
@@ -151,8 +166,8 @@ while True:
             cv2.imshow('Video', frame)
 
             # Hit 'q' on the keyboard to quit!
-            if cv2.waitKey(1) & 0xFF == ord('q') or GPIO.input(11) == 0 or flag_wait == 1:
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            # if cv2.waitKey(1) & 0xFF == ord('q') or GPIO.input(11) == 0:
+            if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
         # Release handle to the webcam
