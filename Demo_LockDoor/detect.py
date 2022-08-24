@@ -75,6 +75,7 @@ while True:
 
             button1 = GPIO.input(7)
             button2 = GPIO.input(9)
+            GPIO.output(8, 0)
             # Grab a single frame of video
             ret, frame = video_capture.read()
             if(button1 == 1):
@@ -139,8 +140,6 @@ while True:
             if (end_time-start_time > 3):
                 GPIO.output(10, 0)
                 print("het time")
-            if (end_time-start_time > 0.5):
-                GPIO.output(8, 0)
                 
             process_this_frame = not process_this_frame
             for (top, right, bottom, left), name in zip(face_locations, face_names):
