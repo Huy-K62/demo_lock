@@ -47,22 +47,34 @@ while True:
         object_image = face_recognition.load_image_file("manager.jpg")
         object_face_encoding = face_recognition.face_encodings(object_image)[0]
         known_face_encodings.append(object_face_encoding)
-        with open('name.txt') as rf:
-            lines = rf.readlines()
-            for idx, line in enumerate(lines):
-                known_face_names.append(line)
-                known_face_names[idx] = known_face_names[idx].strip()
-                #known_face_names = set(known_face_names)
-        for i in range(count):
-            name_customer = "customer"+str(count)+".jpg"
-            customer_image = face_recognition.load_image_file(name_customer)
-            customer_face_encoding = face_recognition.face_encodings(customer_image)[0]
-            known_face_encodings.append(customer_face_encoding)
+        # with open('name.txt') as rf:
+        #     lines = rf.readlines()
+        #     for idx, line in enumerate(lines):
+        #         known_face_names.append(line)
+        #         known_face_names[idx] = known_face_names[idx].strip()
+        #         #known_face_names = set(known_face_names)
+        # for i in range(count):
+        #     name_customer = "customer"+str(count)+".jpg"
+        #     customer_image = face_recognition.load_image_file(name_customer)
+        #     customer_face_encoding = face_recognition.face_encodings(customer_image)[0]
+        #     known_face_encodings.append(customer_face_encoding)
             #known_face_encodings = set(known_face_encodings)
 
         while True:
+            with open('name.txt') as rf:
+                lines = rf.readlines()
+                for idx, line in enumerate(lines):
+                    known_face_names.append(line)
+                    known_face_names[idx] = known_face_names[idx].strip()
+                #known_face_names = set(known_face_names)
+            for i in range(count):
+                name_customer = "customer"+str(count)+".jpg"
+                customer_image = face_recognition.load_image_file(name_customer)
+                customer_face_encoding = face_recognition.face_encodings(customer_image)[0]
+                known_face_encodings.append(customer_face_encoding)
+                
             button1 = GPIO.input(7)
-            button2 = GPIO.input(19)
+            button2 = GPIO.input(9)
             # Grab a single frame of video
             ret, frame = video_capture.read()
             if(button1 == 1):
